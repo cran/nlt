@@ -1,14 +1,14 @@
 \name{denoiseperm}
 \alias{denoiseperm}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{denoiseperm2}
 \title{Denoise a signal using the modified lifting transform and empirical Bayes thresholding}
 \description{
   Denoises an input signal contaminated by noise. First the signal is decomposed using the modified lifting scheme (coded in \code{\link{fwtnpperm}}) using a prespecified order, known as path or trajectory, of point removal. Once the signal is decomposed into wavelet coefficients (or details), these are subjected to an empirical Bayes shrinkage procedure in order to remove the noise, the transform is inverted and an estimate of the noisy signal is obtained.
 }
 \usage{
-denoiseperm(x, f, pred=AdaptPred, neigh=1, int=TRUE, clo=FALSE, keep=2, rule = "median", per = sample(1:length(x),(length(x)-keep),FALSE))
+denoiseperm(x, f, pred=LinearPred, neigh=1, int=TRUE, clo=FALSE, keep=2, 
+rule = "median", per = sample(1:length(x),(length(x)-keep),FALSE))
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{Vector of any length (not necessarily equally spaced) that gives the grid on which the signal is observed.}
   \item{f}{Vector of the same length as \code{x} that gives the signal values corresponding to the \code{x}-locations. }

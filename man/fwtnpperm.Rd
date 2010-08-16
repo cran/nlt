@@ -1,63 +1,94 @@
 \name{fwtnpperm}
 \alias{fwtnpperm}
+\alias{fwtnpperm2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Perform a modified version of the lifting algorithm}
+\title{fwtnp}
 \description{
-  Given a signal, a chosen prediction strategy and neighbourhood size and configuration, this function applies the lifting algorithm that removes one coefficient at a time following a prespecified order of point removal (or path, trajectory), rather than letting the algorithm decide the removal order. We refer to this type of lifting algorithm as the modified lifting scheme.
+Performs the lifting transform on a signal with grid \env{input} and corresponding function values \env{f}. There is a unique correspondence between the grid values and the function values. Can also cope with length vector input instead of gridpoint vector input.
 }
 \usage{
-fwtnpperm(input, f, nkeep = 2, intercept = TRUE, initboundhandl = "reflect", updateboundhandl = "add", neighbours = 1, closest = FALSE, LocalPred = AdaptPred, mod = sample(1:length(input),(length(input)-nkeep),FALSE))
+fwtnpperm(input, f, nkeep = 2, intercept = TRUE,
+ initboundhandl = "reflect", neighbours = 1,
+ closest = FALSE, LocalPred = LinearPred, mod = 
+ sample(1:length(input),(length(input)-nkeep),FALSE),do.W=FALSE, 
+ varonly=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{input}{Vector of any length (possibly irregularly spaced) that gives the grid locations at which the signal is observed.}
-  \item{f}{Vector of the same length as \code{input} that gives the signal values corresponding to the grid locations.}
-  \item{nkeep}{Number of scaling points we want after processing the signal by means of the modified lifting scheme. The usual choice is \code{nkeep}=2.}
-  \item{intercept}{Specifies whether (\code{intercept}=TRUE) or not (\code{intercept}=FALSE) an intercept is to be used in the regression curve. For \code{LocalPred}=\code{AdaptPred} or \code{AdaptNeigh}, the algorithm automatically makes this choice.}
-  \item{initboundhandl}{Character string, it indicates the strategy used for handling the interval boundaries at the start of the transform: \code{"reflect"} indicates that the intervals corresponding to the first and last data points are taken to have the respective grid values as midpoints, while \code{"stop"} indicates that the first and last intervals have as outer endpoints the grid points themselves.}
-  \item{updateboundhandl}{Character string, it indicates the strategy used for updating the intervals associated to the neighbours of the points removed from the boundary:\code{"reflect"} indicates that the neighbouring intervals are symmetrical around the corresponding grid point, \code{"stop"} indicates that the neighbouring intervals end at the respective data points, and \code{"add"} indicates that the neighbouring intervals have outer endpoints where the boundary intervals did.}
-  \item{neighbours}{Number of neighbours to be used for defining the neighbourhood of each point that has to be removed. If (\code{closest}=FALSE), then this gives the number of neighbours to be used on each side of the removed point.}
-  \item{closest}{If (\code{closest}=TRUE) or (\code{closest}=FALSE), then at each step the neighbours are in closest, respectively symmetrical configuration.}
-  \item{LocalPred}{The type of regression to be used in the prediction step of the modified lifting algorithm. Choices are linear, quadratic or cubic (respectively, \code{LinearPred}, \code{QuadPred} or \code{CubicPred}), or two adaptive procedures which automatically choose the degree used in regression, (\code{AdaptPred} or \code{AdaptNeigh}).}
-  \item{mod}{Vector of length (length(\code{x})-\code{nkeep}) that gives the order of point removal to be used by the modified lifting algorithm. This is in fact the trajectory or path previously mentioned.}
+  \item{input}{A vector of grid values. Can be of any length, not necessarily equally spaced.}
+  \item{f}{A vector of function values corresponding to \env{input}. Must be of the same length as \env{input}.}
+  \item{nkeep}{The number of scaling coefficients to be kept in the final representation of the initial signal. This must be at least two. }
+  \item{intercept}{Indicates whether or not the regression curve includes an intercept.}
+  \item{initboundhandl}{variable specifying how to handle the boundary at the start of the transform.  Possible values are \code{"reflect"} - the intervals corresponding to the first and last datapoints are taken to have the respective grid values as midpoints; and \code{"stop"} - the first and last intervals have the first and last grid values (respectively) as outer endpoints.}
+  \item{neighbours}{The number of neighbours over which the regression is performed at each step. If closest is false, then this in fact denotes the number of neighbours on each side of the removed point.}
+  \item{closest}{Refers to the configuration of the chosen neighbours. If \env{closest} is false, the neighbours will be chosen symmetrically around the removed point. Otherwise, the closest neighbours will be chosen.}
+  \item{LocalPred}{The type of regression to be performed. Possible options are \code{LinearPred}, \code{QuadPred}, \code{CubicPred}, \code{AdaptPred} and \code{AdaptNeigh}.}
+  \item{mod}{Vector of length (length(\code{x})-\code{keep}). It gives 
+  the 
+  trajectory for the modified lifting algorithm to follow, i.e. it gives 
+  the order of point removal.}
+  \item{do.W}{A boolean indicating whether the transform matrix should 
+  be computed and returned.}
+  \item{varonly}{A boolean indicating whether only the coefficient 
+  variances should be returned (if \code{do.W=TRUE}).}
 }
 \details{
- The function here is not designed to cope with multiple observations at the same grid point, although it can be modified to do so. If multiple data is supplied, then the algorithm performs the usual lifting algorithm coded in the function \code{fwtnpmp} (designed to handle multiple entries) of the package 'adlift'. The algorithm can be easily inverted by using the function \code{invtnp} of the package 'adlift'. Also the functions that appear as options for \code{LocalPred} can be found in the same 'adlift' package.
+Given \eqn{n} points on a line, \env{input}, each with a corresponding env{f} value this algorithm computes a lifting transform of the (\env{input},\env{f}) data. If lengths are inputted (\env{inputtype="lengths"}), then the gridpoints are taken to be the left endpoints of the intervals defined by the lengths inputted. 
+Step One. Order the grid values so that corresponding intervals can be constructed. 
+
+Step Two. Compute "integrals" for each point. For each point its integral is the length of the interval associated to the gridpoint. 
+
+Step Three. Identify the point to remove as that with the smallest integral. Generally, we remove points in order of smallest to largest integral. The integrals of neighbours of removed points change at each step. 
+
+Step Four(a). The neighbours of the removed point are identified using the specified neighbour configuration. The value of \env{f} at the removed point is predicted using the specified regression curve over the neighbours, unless an adaptive procedure is chosen. In this case, the algorithm adjusts itself. The difference between the removed point's \env{f} value and the prediction is computed: this is the wavelet coefficient for the removed point. The difference replaces the function value in the vector coeff at the removed point's location. In this way wavelet coefficients gradually overwrite (scaling) function values in \env{coeff}. 
+
+Step Four(b). The integrals and the scaling function values (other \env{coeff} values) of neighbours of the removed point are updated. The values of the rest of the scaling coefficients are unaffected. 
+
+Step Five. Return to step 3 but in the identification of a point to remove the updated integrals are used. 
+
+The algorithm continues until as many points as desired are removed.  If 
+\code{do.W=TRUE}, the predict and update lifting steps are used to 
+propogate coefficient contributions to the transform matrix \code{W}.  
+If \code{varonly=TRUE}, only the (detail and scaling) coefficient 
+variances are returned.  After each lifting step, the 
+coefficient variance is computed and the transform matrix 
+row corresponding to the lifted coefficient is deleted for the 
+next stage (minimal storage efficiency).  The transform matrix is not 
+returned (i.e. \code{W=NULL}). 
 }
 \value{
-  \item{X}{Vector of grid points used in the transform.}
-  \item{coeff }{Vector (in the order of \code{X}) giving the detail and scaling coefficients obtained after lifting the initial signal.}
-  \item{origlengths}{Vector of initial interval lengths corresponding to each gridpoint.}
-  \item{lengths}{Vector of updated interval lengths corresponding to the scaling coefficients. Its length is \code{nkeep}.}
-  \item{lengthsremove}{Vector giving the (updated) interval lengths corresponding to each removed point at its removal time. It corresponds to the removal order given by \code{removelist}.}
-  \item{pointsin}{Vector of indices into \code{X} giving the scaling coefficients after the lifting algorithm removed the points specified by the trajectory. The length of this vector is \code{nkeep}.}
-  \item{removelist}{Vector of indices into \code{X} giving the lifted coefficients in their order of removal. This should coincide with the given trajectory.}
-  \item{neighbrs}{List of indices into \code{X}. Each list entry gives the indices of the neighbours of the removed point used at that particular step of the transform.}
-  \item{neighbours}{Number of neighbours used in the prediction step of the transform.}
-  \item{gamlist}{List of prediction weights used in the prediction step of the transform.}
-  \item{alphalist}{List of update coefficients used in the update step of the decomposition.}
-  \item{schemehist}{Vector of character strings indicating the type of regression used at each step of the transform. This is NULL when a non-adaptive regression step is chosen.}
-  \item{interhist}{Boolean vector indicating whether or not an intercept was used in the regression curve at each step. This is NULL when a non-adaptive regression step is chosen.}
-  \item{clolist}{Boolean vector recording the neighbour configuration chosen at each step: TRUE corresponds to closest neighbours, while FALSE to symmetrical neighbours. It is NULL except for \code{LocalPred}=\code{AdaptNeigh}.}
+\item{X}{data vector of the grid used in the transform.}
+\item{coeff}{vector of detail and scaling coefficients in the wavelet decomposition of the signal.}
+\item{origlengths}{vector of initial interval lengths corresponding to the gridpoints.}
+\item{lengths}{vector of (updated) interval lengths at the end of the transform. This is of length \env{nkeep}.}
+\item{lengthsremove}{vector of interval lengths corresponding to the points removed during the transform (in \env{removelist}).}
+\item{pointsin}{indices into \env{X} of the scaling coefficients in the wavelet decomposition. These are the indices of the \env{X} values which remain after all points in \env{removelist} have been predicted and removed. This has length \env{nkeep}.}
+\item{removelist}{a vector of indices into \env{X} of the lifted coefficients during the transform (in the order of removal).}
+\item{neighbrs}{a list of indices into \env{X}. Each list entry gives the indices of the neighbours of the removed point used at that particular step of the transform.}
+\item{neighbours}{the user-specified number of neighbours used in the prediction step of the transform.}
+\item{gamlist}{a list of all the prediction weights used at each step of the transform.}
+\item{alphalist}{a list of the update coefficients used in the update step of the decomposition.}
+\item{schemehist}{a vector of character strings indicating the type of regression used at each step of the transform.}
+\item{interhist}{a boolean vector indicating whether or not an intercept was used in the regression curve at each step.}
+\item{clolist}{a boolean vector showing whether or not the neighbours were symmetrical (FALSE) about the removed point during the transform. This is NULL except when \code{LocalPred=AdaptNeigh}.}
 }
-\references{See the paper 'A "nondecimated" lifting transform.' by Knight, M.I. and Nason, G.P. (2008) for further details.}
-\author{Marina Knight (marina.knight@bristol.ac.uk)}
-\note{Use this function together with the "adlift" package available from CRAN.}
-\seealso{\code{fwtnp},\code{fwtnpmp},\code{invtnp} of package 'adlift'}
+
+\author{Matt Nunes (\email{m.nunes@lancs.ac.uk}), Marina.Knight}
+
+\seealso{\code{\link{AdaptNeigh}}, \code{\link{AdaptPred}}, \code{\link{CubicPred}}, \code{\link{fwtnpmp}}, \code{\link{invtnp}}, \code{\link{LinearPred}}, \code{\link{QuadPred}}     }
 \examples{
-#construct an irregular grid of length 256
-input<-runif(256)
-
-#now construct a Doppler signal on the grid above 
-f<-make.signal2("doppler",x=input)
-
-#generate the vector which will indicate the order of point removal that will be followed by the modified lifting algorithm (i.e. the trajectory)
-#vec below gives the first (length(input)-nkeep) entries of a random permutation of (1:length(input)) 
-vec<-sample(1:256,254,FALSE)
-
-#now transform the initial signal (input,f) into a set of wavelet and scaling coefficients by using a modified lifting transform 
-#that follows the removal order in vec and linear regression prediction steps and neighbourhoods of size 2 in symmetrical configuration
-#the set of scaling and detail coefficients can be found in out$coeff
-out<-fwtnpperm(input,f,LocalPred=LinearPred,neighbours=1,closest=FALSE,intercept=TRUE,nkeep=2,mod=vec) 
+#
+# Generate some one-dimensional data: 100 observations.
+#
+input <- runif(100)
+f <- input^2 - 3*input
+#
+# Compute fwtnp function on this data
+#
+out <- fwtnp(input,f,LocalPred=AdaptPred,neighbours=2,closest=TRUE)
+#
+# That's it.
+#
 }
-\keyword{methods}
+\keyword{methods}% at least one, from doc/KEYWORDS
+

@@ -1,50 +1,55 @@
 \name{transmatdualperm}
 \alias{transmatdualperm}
+\alias{transmatdualperm2}
+
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Compute the matrix associated to the modified lifting algorithm}
+\title{transmatdual}
 \description{
- Given a signal, a method of prediction (including neighbourhood definition) and a trajectory for the modified lifting algorithm to follow, this function computes the matrix that represents the transform from the raw data to the set of detail and scaling coefficients.   
+Works out the transform matrix for a particular prediction scheme and neighbourhood structure.
 }
 \usage{
-transmatdualperm(x, f, Pred = AdaptPred, neigh = 1, int = TRUE, clo = FALSE, keep = 2, perm = sample(1:length(x),(length(x)-keep),FALSE))
+transmatdualperm(x, f, Pred = AdaptNeigh, neigh = 1, int = TRUE, clo = 
+TRUE, keep = 2,perm = 
+sample(1:length(x),(length(x)-keep),FALSE),varonly=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{Vector of any length (possibly irregularly spaced) that gives the grid locations at which the signal is observed.}
-  \item{f}{Vector of the same length as \code{x} that gives the signal values corresponding to the \code{x}-locations.}
-  \item{Pred}{The type of regression to be used in the prediction step of the modified lifting algorithm. Choices are linear, quadratic or cubic (respectively, \code{LinearPred}, \code{QuadPred} or \code{CubicPred}), or two adaptive procedures which automatically choose the degree used in regression, (\code{AdaptPred} or \code{AdaptNeigh}).}
-  \item{neigh}{Number of neighbours to be used for defining the neighbourhood of each point that has to be removed. If (\code{clo}=FALSE), then this gives the number of neighbours to be used on each side of the removed point.}
-  \item{int}{Specifies whether (\code{int}=TRUE) or not (\code{int}=FALSE) an intercept is to be used in the regression curve. For \code{Pred}=\code{AdaptPred} or \code{AdaptNeigh}, the algorithm automatically makes this choice.}
-  \item{clo}{If (\code{clo}=TRUE) or (\code{clo}=FALSE), then at each step the neighbours are in closest, respectively symmetrical configuration.}
-  \item{keep}{Number of scaling points we want at the end of the application of the modified lifting scheme. The usual choice is \code{keep}=2.}
-  \item{perm}{Vector of length (length(\code{x})-\code{keep}). It gives the trajectory for the modified lifting algorithm to follow, i.e. it gives the order of point removal.}
+  \item{x}{A vector of grid values. Can be of any length, not necessarily equally spaced.}
+  \item{f}{A vector of function values corresponding to \env{x}. Must be of the same length as \env{x}.}
+  \item{Pred}{The type of regression to be performed. Possible options are \command{\link{LinearPred}}, \command{\link{QuadPred}}, \command{\link{CubicPred}}, \command{\link{AdaptPred}} and \command{\link{AdaptNeigh}}.}
+  \item{neigh}{The number of neighbours over which the regression is performed at each step. If \env{clo} is false, then this in fact denotes the number of neighbours on each side of the removed point.}
+  \item{int}{Indicates whether or not the regression curve includes an intercept.}
+  \item{clo}{Refers to the configuration of the chosen neighbours. If \env{clo} is false, the neighbours will be chosen symmetrically around the removed point. Otherwise, the closest neighbours will be chosen.}
+  \item{keep}{The number of scaling coefficients to be kept in the final representation of the initial signal. This must be at least two.}
+  \item{perm}{Vector of length (length(\code{x})-\code{keep}). It gives the trajectory for the modified lifting algorithm to follow, i.e. it gives 
+  the order of point removal.}
+  \item{varonly}{A boolean variable indicating whether only the 
+  coefficient variances should be returned, i.e. just the diagonal of 
+  the transform matrix \code{Wnew}.}
 }
 \details{
-  The matrix associated to the modified lifting transform is of size (length(\code{x}),length(\code{x})), and its columns correspond to the points in their order observation. The functions that appear as choices of \code{Pred} can be found in the package 'adlift'.
+ The function uses \command{Amatdual} to form the refinement matrices \eqn{A_j}, from which the augmented matrices \eqn{T_j} are constructed. This process is iterated, to find the transform matrix (the top level augmented matrix). The rows and columns of this matrix are then reordered to be in the order of \code{out$coeff}, i.e. so that the columns correspond to \eqn{f_1 \dots f_n}.
 }
 \value{
-  \item{out}{Outcome of the modified lifting algorithm (\code{\link{fwtnpperm}}).}
-  \item{Wnew}{Matrix associated to the modified lifting transform.}
-  \item{x}{Vector of grid locations, the same as the \code{x} in \code{Arguments}.}
+    \item{out}{the output from the forward transform.}
+  \item{Wnew}{the matrix associated to the wavelet transform.}
+  \item{x}{the original gridpoint vector. }
 }
-\references{See the paper 'A "nondecimated" lifting transform.' by Knight, M.I. and Nason, G.P. (2008) for further details.}
-\author{Marina Knight (marina.knight@bristol.ac.uk)}
-\note{Use this function together with the "adlift" package available from CRAN.}
-\seealso{\code{\link{fwtnpperm}}}
+
+\author{Matt Nunes (\email{m.nunes@lancs.ac.uk}), Marina Knight }
+
+\seealso{\code{\link{Amatdual}}     }
 \examples{
-#construct the grid locations
-x<-runif(256)
+x1<-runif(10)
+y1<-make.signal2("doppler",x=x1)
+#
+a<-transmatdual(x1,y1,AdaptNeigh,2,TRUE,TRUE,2)
+#
+a$Wnew
+#
+#the transform matrix for this adaptive lifting scheme 
 
-#construct a signal 
-f<-runif(256) 
-
-#generate the vector which will indicate the order of point removal that will be followed by the modified lifting algorithm (i.e. the trajectory)
-#vec below gives the first (length(x)-keep) entries of a random permutation of (1:length(x)) 
-vec<-sample(1:256,254,FALSE)  
-
-#now you can transform the initial signal (x,f) into a set of wavelet and scaling coefficients, and work out the matrix associated to the transform 
-#in the example below, the lifting transform follows the path given by vec and adaptive prediction steps with neighbourhoods of sizes at most 2 
-#the matrix associated to the transform is given by out$Wnew, and the output from the modified lifting transform is found in out$out
-out<-transmatdualperm(x,f,Pred=AdaptNeigh,neigh=1,clo=TRUE,keep=2,perm=vec) 
 }
-\keyword{methods}
+\keyword{array}% at least one, from doc/KEYWORDS
+
+
