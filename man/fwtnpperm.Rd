@@ -1,31 +1,29 @@
 \name{fwtnpperm}
 \alias{fwtnpperm}
-\alias{fwtnpperm2}
+%\alias{fwtnpperm2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{fwtnp}
+\title{fwtnpperm}
 \description{
 Performs the lifting transform on a signal with grid \env{input} and corresponding function values \env{f}. There is a unique correspondence between the grid values and the function values. Can also cope with length vector input instead of gridpoint vector input.
 }
 \usage{
-fwtnpperm(input, f, nkeep = 2, intercept = TRUE,
- initboundhandl = "reflect", neighbours = 1,
- closest = FALSE, LocalPred = LinearPred, mod = 
- sample(1:length(input),(length(input)-nkeep),FALSE),do.W=FALSE, 
- varonly=FALSE)
+fwtnpperm (input, f, LocalPred = LinearPred, neighbours = 1,
+intercept = TRUE,closest = FALSE, nkeep = 2, initboundhandl = "reflect", mod =
+    sample(1:length(input), (length(input) - nkeep), FALSE),
+    do.W = FALSE, varonly = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{input}{A vector of grid values. Can be of any length, not necessarily equally spaced.}
   \item{f}{A vector of function values corresponding to \env{input}. Must be of the same length as \env{input}.}
-  \item{nkeep}{The number of scaling coefficients to be kept in the final representation of the initial signal. This must be at least two. }
-  \item{intercept}{Indicates whether or not the regression curve includes an intercept.}
-  \item{initboundhandl}{variable specifying how to handle the boundary at the start of the transform.  Possible values are \code{"reflect"} - the intervals corresponding to the first and last datapoints are taken to have the respective grid values as midpoints; and \code{"stop"} - the first and last intervals have the first and last grid values (respectively) as outer endpoints.}
-  \item{neighbours}{The number of neighbours over which the regression is performed at each step. If closest is false, then this in fact denotes the number of neighbours on each side of the removed point.}
-  \item{closest}{Refers to the configuration of the chosen neighbours. If \env{closest} is false, the neighbours will be chosen symmetrically around the removed point. Otherwise, the closest neighbours will be chosen.}
   \item{LocalPred}{The type of regression to be performed. Possible options are \code{LinearPred}, \code{QuadPred}, \code{CubicPred}, \code{AdaptPred} and \code{AdaptNeigh}.}
+  \item{neighbours}{The number of neighbours over which the regression is performed at each step. If closest is false, then this in fact denotes the number of neighbours on each side of the removed point.}
+  \item{intercept}{Indicates whether or not the regression curve includes an intercept.}
+  \item{closest}{Refers to the configuration of the chosen neighbours. If \env{closest} is false, the neighbours will be chosen symmetrically around the removed point. Otherwise, the closest neighbours will be chosen.}
+  \item{nkeep}{The number of scaling coefficients to be kept in the final representation of the initial signal. This must be at least two. }
+  \item{initboundhandl}{variable specifying how to handle the boundary at the start of the transform.  Possible values are \code{"reflect"} - the intervals corresponding to the first and last datapoints are taken to have the respective grid values as midpoints; and \code{"stop"} - the first and last intervals have the first and last grid values (respectively) as outer endpoints.}
   \item{mod}{Vector of length (length(\code{x})-\code{keep}). It gives 
-  the 
-  trajectory for the modified lifting algorithm to follow, i.e. it gives 
+  the trajectory for the modified lifting algorithm to follow, i.e. it gives 
   the order of point removal.}
   \item{do.W}{A boolean indicating whether the transform matrix should 
   be computed and returned.}
@@ -85,7 +83,9 @@ f <- input^2 - 3*input
 #
 # Compute fwtnp function on this data
 #
-out <- fwtnp(input,f,LocalPred=AdaptPred,neighbours=2,closest=TRUE)
+vec<-sample(1:100,98,FALSE)
+
+out <- fwtnpperm(input,f,LocalPred=AdaptPred,neighbours=2,closest=TRUE,mod=vec)
 #
 # That's it.
 #

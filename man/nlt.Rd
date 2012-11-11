@@ -1,12 +1,12 @@
 \name{nlt}
 \alias{nlt}
-\alias{nlt2}
+%\alias{nlt2}
 \title{Denoise a signal using a nondecimated lifting transform}
 \description{
   Starting with a noise-contaminated signal, we decompose it using a 'nondecimated' lifting algorithm (i.e. by applying the modified lifting transform following several random paths), shrink all the obtained detail coefficients and invert each transform to give an estimated signal. The average of all these estimates is the final proposal for estimating the true (unknown) signal.
 }
 \usage{
-nlt(x, f, J, Pred = AdaptPred, neighbours = 1, closest = FALSE, intercept = TRUE, nkeep = 2, trule = "median",verbose = TRUE)
+nlt(x, f, J, Pred = AdaptPred, neighbours = 1, closest = FALSE, intercept = TRUE, nkeep = 2, trule = "median",verbose = TRUE,do.orig = FALSE, returnall = FALSE)
 }
 \arguments{
   \item{x}{Vector of any length (possibly irregularly spaced) that gives the grid locations where the signal is observed.}
@@ -19,20 +19,21 @@ nlt(x, f, J, Pred = AdaptPred, neighbours = 1, closest = FALSE, intercept = TRUE
   \item{nkeep}{Number of scaling points we want at the end of the application of the transform. The usual choice is \code{nkeep}=2.}
   \item{trule}{The type of Bayesian shrinkage technique, with possible choices posterior median (\code{"median"}) or posterior mean (\code{"mean"}).}
   \item{verbose}{A boolean indicating whether extra information should be printed.}
+  \item{do.orig}{A boolean indicating whether the original \code{adlift} algorithm should also be computed.}
+  \item{returnall}{A boolean indicating whether the function returns useful variables or just the denoised datapoints.}
 }
 \details{
   Essentially, this function applies \code{J} times the modified lifting algorithm (that can be found in \code{\link{fwtnpperm}}), and removes the noise from all sets of detail coefficients by using empirical Bayes shrinkage (of package 'EbayesThresh'). Inverting (by means of the function \code{invtnp} of the package 'adlift') each transform consequently results in \code{J} estimates of the (unknown) true signal. The average of these estimators is our proposed estimator. The functions that appear as choices for \code{Pred} can be found in the package 'adlift'.
 }
 \value{
   \item{vec}{Matrix whose rows give the trajectories to be used by the nondecimated lifting algorithm.}
-  \item{ghatmat}{Matrix whose rows give the estimated signal corresponding to each trajectory.}
   \item{ghatnat}{Vector that gives the estimated true signal given by denoising using the lifting scheme that establishes its own order for removing the points (but with the same specification for prediction stage and neighbourhood as the modified algorithm), rather than a randomly generated order.}
-  \item{aveghat}{Estimated signal, obtained as the average of the individual estimates in \code{ghatmat}.}
+  \item{aveghat}{Estimated signal, obtained as the average of the individual estimates from the random trajectory runs.}
 }
-\references{See the paper 'A "nondecimated" lifting transform.' by Knight, M.I. and Nason, G.P. (2008) for further details.}
+\references{See the paper 'A "nondecimated" lifting transform.' by Knight, M.I. and Nason, G.P. (2009) for further details.}
 \author{Marina Knight (marina.knight@bristol.ac.uk)}
 \note{Use this function together with the "adlift" and "EbayesThresh" packages available from CRAN.}
-\seealso{\code{\link{denoiseperm}}, \code{\link{transmatdualperm}}, \code{\link{fwtnpperm}}, and also \code{invtnp} of package 'adlift'}
+\seealso{\code{\link{denoiseperm}}, \code{\link{fwtnpperm}}, \code{\link{fwtnpperm}}, and also \code{invtnp} of package 'adlift'}
 \examples{
 #construct the grid
 x<-runif(256) 
@@ -50,6 +51,6 @@ f<-g+noise
 #below we apply the modified lifting transform J times, each time following a different path, and using adaptive prediction with neighbourhoods of size 2
 #in closest configuration; all details are then thresholded using posterior medians and the algorithms inverted
 #the aggregate estimator of g proposed by our method is found in out$aveghat
-out<-nlt(x,f,J=20,Pred=AdaptPred,neighbours=2,closest=TRUE,intercept=TRUE,nkeep=2,trule="median") 
+out<-nlt(x,f,J=10,Pred=AdaptPred,neighbours=2,closest=TRUE,intercept=TRUE,nkeep=2,trule="median") 
 }
 \keyword{nonparametric}

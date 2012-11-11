@@ -1,9 +1,9 @@
 \name{transmatdualperm}
 \alias{transmatdualperm}
-\alias{transmatdualperm2}
+%\alias{transmatdualperm2}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{transmatdual}
+\title{transmatdualperm}
 \description{
 Works out the transform matrix for a particular prediction scheme and neighbourhood structure.
 }
@@ -38,12 +38,21 @@ sample(1:length(x),(length(x)-keep),FALSE),varonly=FALSE)
 
 \author{Matt Nunes (\email{m.nunes@lancs.ac.uk}), Marina Knight }
 
-\seealso{\code{\link{Amatdual}}     }
+\note{ This function has been left in the package for completeness.  However, the transform matrix is (optionally) computed within the forward lifting
+transform function \code{\link{fwtnp}}.
+}
+
+\seealso{
+\code{\link{fwtnp}}
+}
+
 \examples{
 x1<-runif(10)
 y1<-make.signal2("doppler",x=x1)
 #
-a<-transmatdual(x1,y1,AdaptNeigh,2,TRUE,TRUE,2)
+vec<-sample(1:10,8,FALSE)
+
+a<-transmatdualperm(x1,y1,AdaptNeigh,2,TRUE,TRUE,2,perm=vec)
 #
 a$Wnew
 #

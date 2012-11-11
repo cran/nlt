@@ -1,9 +1,24 @@
-.First.lib <-function(lib,pkg)
+.onAttach <-function(lib,pkg)
 {
 ver <- read.dcf(file.path(lib, pkg, "DESCRIPTION"), "Version")
      ver <- as.character(ver)	
 
-library.dynam("nlt",pkg,lib)
+curdate <- read.dcf(file.path(lib, pkg, "DESCRIPTION"), "Date")
+    curdate <- as.character(curdate)
 
-cat("nlt", ver, "loaded\n")
+# Welcome message (MAN):
+
+packageStartupMessage(paste(
+"\n",
+"**********************************************\n",
+"nlt: a package to perform nondecimated wavelet lifting\n\n",
+"--- Written by Marina Knight and Matt Nunes ---\n",
+"  Current package version: ",ver," (",curdate,") \n\n",
+"            -+ packaged by MAN +-           \n",
+"**********************************************\n",
+"\n",
+
+"nlt", ver, "loaded\n")
+)
+
 }
