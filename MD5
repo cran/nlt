@@ -1,4 +1,4 @@
-6af22a87caa523cdaf8237d9be483660 *DESCRIPTION
+35a297fa368dcb2c0d77eb7ded2a12d6 *DESCRIPTION
 da706a562b6e49d3690cd040e62de857 *NAMESPACE
 890568aa02603880c8df8b3a7eef4413 *R/denoiseperm.R
 196fb8a5bd8246d28dd1fd2b4612950e *R/fwtnpperm.R
@@ -6,6 +6,6 @@ da706a562b6e49d3690cd040e62de857 *NAMESPACE
 22aaecaf4e3223483636f61d063012c7 *R/transmatdualperm.R
 2268934d460b28955b83b69b20a4e705 *R/zzz.R
 2b007521c93d689ec68327d75e293a4d *man/denoiseperm.Rd
-364e25aa0f9243a9d9d74f95f029ca2f *man/fwtnpperm.Rd
+a85f199a8270594a43c93b3ccac5c99c *man/fwtnpperm.Rd
 256204dcfab717f9868bb6834594271b *man/nlt.Rd
-b04eb871d54a5ed336e69b4128000ad5 *man/transmatdualperm.Rd
+0ea3bebcdd4b4ca94feb49fb8c96348f *man/transmatdualperm.Rd

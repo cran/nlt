@@ -16,7 +16,7 @@ sample(1:length(x),(length(x)-keep),FALSE),varonly=FALSE)
 \arguments{
   \item{x}{A vector of grid values. Can be of any length, not necessarily equally spaced.}
   \item{f}{A vector of function values corresponding to \env{x}. Must be of the same length as \env{x}.}
-  \item{Pred}{The type of regression to be performed. Possible options are \command{\link{LinearPred}}, \command{\link{QuadPred}}, \command{\link{CubicPred}}, \command{\link{AdaptPred}} and \command{\link{AdaptNeigh}}.}
+  \item{Pred}{The type of regression to be performed. Possible options are \command{\link[adlift]{LinearPred}}, \command{\link[adlift]{QuadPred}}, \command{\link[adlift]{CubicPred}}, \command{\link[adlift]{AdaptPred}} and \command{\link[adlift]{AdaptNeigh}}.}
   \item{neigh}{The number of neighbours over which the regression is performed at each step. If \env{clo} is false, then this in fact denotes the number of neighbours on each side of the removed point.}
   \item{int}{Indicates whether or not the regression curve includes an intercept.}
   \item{clo}{Refers to the configuration of the chosen neighbours. If \env{clo} is false, the neighbours will be chosen symmetrically around the removed point. Otherwise, the closest neighbours will be chosen.}
@@ -39,11 +39,11 @@ sample(1:length(x),(length(x)-keep),FALSE),varonly=FALSE)
 \author{Matt Nunes (\email{nunesrpackages@gmail.com}), Marina Knight }
 
 \note{ This function has been left in the package for completeness.  However, the transform matrix is (optionally) computed within the forward lifting
-transform function \code{\link{fwtnp}}.
+transform function \code{\link[adlift]{fwtnp}}.
 }
 
 \seealso{
-\code{\link{fwtnp}}
+\code{\link[adlift]{fwtnp}}
 }
 
 \examples{

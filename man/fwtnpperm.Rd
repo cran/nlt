@@ -31,7 +31,7 @@ intercept = TRUE,closest = FALSE, nkeep = 2, initboundhandl = "reflect", mod =
   variances should be returned (if \code{do.W=TRUE}).}
 }
 \details{
-Given \eqn{n} points on a line, \env{input}, each with a corresponding env{f} value this algorithm computes a lifting transform of the (\env{input},\env{f}) data. If lengths are inputted (\env{inputtype="lengths"}), then the gridpoints are taken to be the left endpoints of the intervals defined by the lengths inputted. 
+Given \eqn{n} points on a line, \env{input}, each with a corresponding \env{f} value this algorithm computes a lifting transform of the (\env{input},\env{f}) data. If lengths are inputted (\env{inputtype="lengths"}), then the gridpoints are taken to be the left endpoints of the intervals defined by the lengths inputted. 
 Step One. Order the grid values so that corresponding intervals can be constructed. 
 
 Step Two. Compute "integrals" for each point. For each point its integral is the length of the interval associated to the gridpoint. 
@@ -73,7 +73,7 @@ returned (i.e. \code{W=NULL}).
 
 \author{Matt Nunes (\email{nunesrpackages@gmail.com}), Marina.Knight}
 
-\seealso{\code{\link{AdaptNeigh}}, \code{\link{AdaptPred}}, \code{\link{CubicPred}}, \code{\link{fwtnpmp}}, \code{\link{invtnp}}, \code{\link{LinearPred}}, \code{\link{QuadPred}}     }
+\seealso{\code{\link[adlift]{AdaptNeigh}}, \code{\link[adlift]{AdaptPred}}, \code{\link[adlift]{CubicPred}}, \code{\link[adlift]{fwtnpmp}}, \code{\link[adlift]{invtnp}}, \code{\link[adlift]{LinearPred}}, \code{\link[adlift]{QuadPred}}     }
 \examples{
 #
 # Generate some one-dimensional data: 100 observations.
